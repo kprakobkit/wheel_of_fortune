@@ -67,36 +67,51 @@ end
 def play
   puts "Welcome to Hangman!!!!!"
   puts
+  # pick_a_category # pick category
+
   puts "Here is your phrase. Guess away..."
+
   answer_phrase = "peter is so beautiful to me"
   hidden_phrase = hide_phrase(answer_phrase)
   show_hidden_phrase(hidden_phrase)
   letters_tried = []
 
   number_of_wrong = 0
+  score = 0
+
   until done?(hidden_phrase, number_of_wrong)
     found_letter = false
     puts "\e[H\e[2J"
+    score_multiplier = rand(1..100)
+    puts "Your score is: #{score}."
+    puts "Your multiplier for this round is #{score_multiplier}"
     show_hidden_phrase(hidden_phrase)
     puts "You've tried: #{letters_tried.join(" ")}"
     puts number_of_wrong
     puts "please guess one letter:"
     print "> "
-    users_guess = gets.chomp
+    users_guess = gets.chomp.downcase
     letters_tried << users_guess
 
     hidden_phrase.each do |letter|
       if letter.letter == users_guess
         letter.hidden = false
+        
         found_letter = true
       end
     end
 
+    if found_letter
+      score += answer_phrase.count(users_guess) * score_multiplier
+    end
+
     if !found_letter
       number_of_wrong += 1
+      score -= score_multiplier
     end
   end
   puts "answer: " + answer_phrase
+  puts "Your final score: #{score}"
 end
 
 play
